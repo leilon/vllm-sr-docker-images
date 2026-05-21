@@ -1,185 +1,41 @@
-# vllm-sr 默认 Docker 镜像离线迁移命令
+# vllm-sr 默认 Docker 镜像离线迁移
 
-适用于 `vllm-sr 0.3.0.dev20260521005044` 默认 `vllm-sr serve`。
+这个仓库整理 `vllm-sr 0.3.0.dev20260521005044` 默认 `vllm-sr serve` 需要的 Docker 镜像离线迁移命令。
 
-## 本地机器：拉取默认镜像
+## 快速入口
 
-如果 7 个镜像都还没拉：
+- [默认镜像清单](docs/images.md)
+- [本地机器：拉取并打包镜像](docs/local-packaging.md)
+- [服务器：导入镜像并启动 vllm-sr](docs/server-load-and-start.md)
+- [排障：卡在 waiting for dashboard to become healthy](docs/troubleshooting-dashboard.md)
 
-```bash
-docker pull --platform linux/amd64 ghcr.io/vllm-project/semantic-router/vllm-sr:latest
-docker pull --platform linux/amd64 envoyproxy/envoy:v1.34-latest
-docker pull --platform linux/amd64 ghcr.io/vllm-project/semantic-router/dashboard:latest
-docker pull --platform linux/amd64 ghcr.io/vllm-project/semantic-router/vllm-sr-sim:latest
-docker pull --platform linux/amd64 jaegertracing/all-in-one:latest
-docker pull --platform linux/amd64 prom/prometheus:v2.53.0
-docker pull --platform linux/amd64 grafana/grafana:11.5.1
-```
+## 最短流程
 
-如果第一个 `vllm-sr:latest` 已经拉好了，只拉剩下 6 个：
+本地机器拉取全部 7 个默认镜像并打包：
 
 ```bash
-docker pull --platform linux/amd64 envoyproxy/envoy:v1.34-latest && \
-docker pull --platform linux/amd64 ghcr.io/vllm-project/semantic-router/dashboard:latest && \
-docker pull --platform linux/amd64 ghcr.io/vllm-project/semantic-router/vllm-sr-sim:latest && \
-docker pull --platform linux/amd64 jaegertracing/all-in-one:latest && \
-docker pull --platform linux/amd64 prom/prometheus:v2.53.0 && \
-docker pull --platform linux/amd64 grafana/grafana:11.5.1
+curl -fsSL https://raw.githubusercontent.com/leilon/vllm-sr-docker-images/main/pull-vllm-sr-default-images.sh | bash
 ```
 
-## 本地机器：打包成 tar
-
-```bash
-docker save \
-  ghcr.io/vllm-project/semantic-router/vllm-sr:latest \
-  envoyproxy/envoy:v1.34-latest \
-  ghcr.io/vllm-project/semantic-router/dashboard:latest \
-  ghcr.io/vllm-project/semantic-router/vllm-sr-sim:latest \
-  jaegertracing/all-in-one:latest \
-  prom/prometheus:v2.53.0 \
-  grafana/grafana:11.5.1 \
-  -o vllm-sr-default-images.tar
-```
-
-生成校验文件：
-
-```bash
-sha256sum vllm-sr-default-images.tar > vllm-sr-default-images.tar.sha256
-```
-
-把这两个文件传到服务器：
+把生成的文件传到服务器：
 
 ```text
 vllm-sr-default-images.tar
 vllm-sr-default-images.tar.sha256
 ```
 
-## 服务器：导入镜像
-
-如果传了校验文件，先校验：
+服务器导入并启动：
 
 ```bash
 sha256sum -c vllm-sr-default-images.tar.sha256
-```
-
-导入镜像：
-
-```bash
 docker load -i vllm-sr-default-images.tar
-```
-
-确认 7 个镜像都已经在服务器本地：
-
-```bash
-docker images | grep -E 'vllm-sr|dashboard|envoy|vllm-sr-sim|jaeger|prometheus|grafana'
-```
-
-应该能看到类似这些镜像：
-
-```text
-ghcr.io/vllm-project/semantic-router/vllm-sr
-envoyproxy/envoy
-ghcr.io/vllm-project/semantic-router/dashboard
-ghcr.io/vllm-project/semantic-router/vllm-sr-sim
-jaegertracing/all-in-one
-prom/prometheus
-grafana/grafana
-```
-
-## 服务器：安装 vllm-sr CLI
-
-如果服务器还没有安装 `vllm-sr`，先安装 CLI，但跳过 Docker 自动启动：
-
-```bash
-curl -fsSL https://vllm-semantic-router.com/install.sh | bash -s -- --runtime skip --no-launch
-```
-
-让当前 shell 能找到 `vllm-sr`：
-
-```bash
-export PATH="$HOME/.local/bin:$PATH"
-```
-
-## 服务器：启动 vllm-sr
-
-启动时一定加 `--image-pull-policy never`，避免它再次尝试 `docker pull`：
-
-```bash
 vllm-sr serve --image-pull-policy never
 ```
 
-如果报缺镜像，看报错里的这一行：
-
-```text
-Image not found locally: ...
-```
-
-缺哪个镜像，就在本地机器补拉、重新 `docker save` 或单独保存那个镜像后再传到服务器 `docker load`。
-
-## 一键脚本
-
-拉取全部 7 个镜像：
-
-```bash
-curl -fsSL https://raw.githubusercontent.com/leilon/vllm-sr-docker-images/main/pull-vllm-sr-default-images.sh | bash
-```
-
-只拉剩下 6 个镜像：
+如果第一个 `vllm-sr:latest` 已经拉好了，只拉剩下 6 个：
 
 ```bash
 curl -fsSL https://raw.githubusercontent.com/leilon/vllm-sr-docker-images/main/pull-vllm-sr-remaining-images.sh | bash
 ```
 
-如果服务器是 ARM64，把 `linux/amd64` 改成 `linux/arm64` 再拉取。
-
-## 服务器排障：卡在 waiting for dashboard to become healthy
-
-如果启动时卡在：
-
-```text
-info waiting for dashboard to become healthy
-```
-
-先看 `vllm-sr` 相关容器状态：
-
-```bash
-docker ps -a | grep -E 'vllm-sr|dashboard'
-```
-
-查看 dashboard 容器日志：
-
-```bash
-docker logs --tail 200 vllm-sr-dashboard-container
-```
-
-测试 dashboard 健康检查接口：
-
-```bash
-curl -v http://localhost:8700/healthz
-```
-
-如果 dashboard 容器已经退出，查看退出状态：
-
-```bash
-docker inspect vllm-sr-dashboard-container \
-  --format 'status={{.State.Status}} exit={{.State.ExitCode}} error={{.State.Error}}'
-```
-
-检查 8700 端口是否被占用：
-
-```bash
-ss -lntp | grep 8700
-```
-
-确认相关镜像已经导入：
-
-```bash
-docker images | grep -E 'vllm-sr|dashboard|envoy|vllm-sr-sim|jaeger|prometheus|grafana'
-```
-
-常见原因：
-
-- dashboard 镜像没有正确导入。
-- 服务器架构和本地拉取镜像架构不一致，例如 ARM 服务器导入了 `linux/amd64` 镜像。
-- 8700 端口已被占用。
-- dashboard 容器启动时报错，需要看 `docker logs`。
+如果服务器是 ARM64，把脚本里的 `linux/amd64` 改成 `linux/arm64` 后再拉取。
