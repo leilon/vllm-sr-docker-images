@@ -18,6 +18,36 @@ docker ps -a | grep -E 'vllm-sr|dashboard'
 docker logs --tail 200 vllm-sr-dashboard-container
 ```
 
+如果提示：
+
+```text
+No such container: vllm-sr-dashboard-container
+```
+
+先列出实际容器名：
+
+```bash
+docker ps -a --format 'table {{.Names}}\t{{.Image}}\t{{.Status}}' | grep -E 'vllm|semantic|dashboard|envoy|grafana|prometheus|jaeger'
+```
+
+如果设置过 `VLLM_SR_STACK_NAME`，容器名会变成：
+
+```text
+<stack-name>-vllm-sr-dashboard-container
+```
+
+查看当前 stack 名：
+
+```bash
+echo "${VLLM_SR_STACK_NAME:-default}"
+```
+
+也可以直接找 dashboard 容器：
+
+```bash
+docker ps -a --format '{{.Names}}' | grep dashboard
+```
+
 测试 dashboard 健康检查接口：
 
 ```bash
