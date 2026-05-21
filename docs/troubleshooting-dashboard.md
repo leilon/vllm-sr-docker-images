@@ -36,6 +36,12 @@ docker ps -a --format 'table {{.Names}}\t{{.Image}}\t{{.Status}}' | grep -E 'vll
 <stack-name>-vllm-sr-dashboard-container
 ```
 
+容器名不一样本身不会导致 `vllm-sr serve` 卡住，但会导致你用默认名字查日志时报：
+
+```text
+No such container: vllm-sr-dashboard-container
+```
+
 查看当前 stack 名：
 
 ```bash
@@ -47,6 +53,16 @@ echo "${VLLM_SR_STACK_NAME:-default}"
 ```bash
 docker ps -a --format '{{.Names}}' | grep dashboard
 ```
+
+自动找到 dashboard 容器并查看日志：
+
+```bash
+DASHBOARD_CONTAINER="$(docker ps -a --format '{{.Names}}' | grep 'dashboard' | head -n1)"
+echo "$DASHBOARD_CONTAINER"
+docker logs --tail 200 "$DASHBOARD_CONTAINER"
+```
+
+如果 `echo "$DASHBOARD_CONTAINER"` 输出为空，说明不是名字问题，而是 dashboard 容器根本没有创建成功。
 
 如果仍然没有 dashboard 容器，检查是不是 Docker 上下文或执行用户不一致：
 
