@@ -48,6 +48,40 @@ echo "${VLLM_SR_STACK_NAME:-default}"
 docker ps -a --format '{{.Names}}' | grep dashboard
 ```
 
+如果仍然没有 dashboard 容器，检查是不是 Docker 上下文或执行用户不一致：
+
+```bash
+docker context ls
+docker info --format 'Name={{.Name}} ServerVersion={{.ServerVersion}} DockerRootDir={{.DockerRootDir}}'
+```
+
+如果 `vllm-sr serve` 是用 `sudo` 启动的，也要用 `sudo docker` 查看：
+
+```bash
+sudo docker ps -a --format 'table {{.Names}}\t{{.Image}}\t{{.Status}}' | grep -E 'vllm|semantic|dashboard|envoy|grafana|prometheus|jaeger'
+```
+
+反过来，如果当前是 rootless Docker，确认 Docker socket：
+
+```bash
+echo "$DOCKER_HOST"
+docker context inspect --format '{{json .Endpoints}}'
+```
+
+再确认 `vllm-sr` 没有被环境变量切到 minimal 或自定义 stack：
+
+```bash
+env | grep -E '^VLLM_SR_|^DASHBOARD_|^DISABLE_DASHBOARD|^DOCKER_HOST'
+```
+
+重新启动时保存完整日志，方便确认 dashboard 有没有被创建：
+
+```bash
+vllm-sr stop || true
+vllm-sr serve --image-pull-policy never 2>&1 | tee vllm-sr-serve.log
+grep -Ei 'dashboard|container|image|failed|error|pull|not found' vllm-sr-serve.log
+```
+
 测试 dashboard 健康检查接口：
 
 ```bash
