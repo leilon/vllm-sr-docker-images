@@ -14,6 +14,17 @@ docker pull --platform linux/amd64 prom/prometheus:v2.53.0
 docker pull --platform linux/amd64 grafana/grafana:11.5.1
 ```
 
+If `ghcr.io/vllm-project/semantic-router/vllm-sr:latest` is already pulled, pull only the remaining six images:
+
+```bash
+docker pull --platform linux/amd64 envoyproxy/envoy:v1.34-latest && \
+docker pull --platform linux/amd64 ghcr.io/vllm-project/semantic-router/dashboard:latest && \
+docker pull --platform linux/amd64 ghcr.io/vllm-project/semantic-router/vllm-sr-sim:latest && \
+docker pull --platform linux/amd64 jaegertracing/all-in-one:latest && \
+docker pull --platform linux/amd64 prom/prometheus:v2.53.0 && \
+docker pull --platform linux/amd64 grafana/grafana:11.5.1
+```
+
 Save them into one archive:
 
 ```bash
@@ -58,6 +69,12 @@ Optional one-command script:
 
 ```bash
 curl -fsSL https://raw.githubusercontent.com/leilon/vllm-sr-docker-images/main/pull-vllm-sr-default-images.sh | bash
+```
+
+Pull only the remaining six images:
+
+```bash
+curl -fsSL https://raw.githubusercontent.com/leilon/vllm-sr-docker-images/main/pull-vllm-sr-remaining-images.sh | bash
 ```
 
 If the server is ARM64, replace `linux/amd64` with `linux/arm64` before pulling.
