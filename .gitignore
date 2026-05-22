@@ -10,3 +10,4 @@ id_rsa*
 kubeconfig*
 config.yaml
 runtime.env
+semantic-router-src/

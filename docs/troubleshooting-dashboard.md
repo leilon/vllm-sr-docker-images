@@ -1,5 +1,18 @@
 # 排障：卡在 waiting for dashboard to become healthy
 
+## NEWEST / 最新判断
+
+如果你已经确认 dashboard image 存在，但 `docker ps -a` 里没有 dashboard container，先看这个最新判断页：
+
+[NEWEST / 最新：dashboard image 存在，但没有 dashboard container](newest-dashboard-image-but-no-container.md)
+
+核心判断：
+
+- image 存在只说明 `docker load` 成功，不代表 container 已经创建。
+- 如果 `vllm-sr-serve.log` 里没有 `Starting dashboard container`，说明启动流程在 dashboard 之前失败。
+- 如果日志里有 `Starting dashboard container`，但 `docker ps -a` 找不到，优先怀疑 Docker context / `sudo docker` / `DOCKER_HOST` 不一致。
+- 如果能看到 dashboard container 但状态是 `Exited`，看 `docker logs` 和 `docker inspect`。
+
 如果启动时卡在：
 
 ```text

@@ -8,6 +8,7 @@
 - [本地机器：拉取并打包镜像](docs/local-packaging.md)
 - [服务器：导入镜像并启动 vllm-sr](docs/server-load-and-start.md)
 - [服务器：离线启动和 dashboard 诊断](docs/server-diagnosis.md)
+- **NEWEST / 最新**：[dashboard image 存在，但没有 dashboard container](docs/newest-dashboard-image-but-no-container.md)
 - [排障：卡在 waiting for dashboard to become healthy](docs/troubleshooting-dashboard.md)
 
 ## 最短流程
@@ -45,4 +46,10 @@ dashboard 卡住或找不到容器时，在服务器上跑诊断：
 
 ```bash
 curl -fsSL https://raw.githubusercontent.com/leilon/vllm-sr-docker-images/main/diagnose-vllm-sr-dashboard.sh | bash
+```
+
+**NEWEST / 最新判断**：如果 dashboard image 已经存在，但没有 dashboard container，看这里：
+
+```text
+docs/newest-dashboard-image-but-no-container.md
 ```
