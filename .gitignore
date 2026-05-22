@@ -11,3 +11,5 @@ kubeconfig*
 config.yaml
 runtime.env
 semantic-router-src/
+wheels/
+wheel-*/

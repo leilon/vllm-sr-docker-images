@@ -51,6 +51,29 @@ run() {
     docker logs --tail 200 "${DASHBOARD_CONTAINER}" || true
   else
     echo "No dashboard container was found. This usually means vllm-sr did not create it."
+    echo
+    echo "## stable single-container check"
+    MAIN_CONTAINER="$(docker ps -a --format '{{.Names}}' | grep '^vllm-sr-container$' | head -n1 || true)"
+    echo "MAIN_CONTAINER=${MAIN_CONTAINER}"
+    if [ -n "${MAIN_CONTAINER}" ]; then
+      echo "Detected vllm-sr stable single-container layout. Dashboard runs inside vllm-sr-container."
+      run docker inspect "${MAIN_CONTAINER}" \
+        --format 'name={{.Name}} status={{.State.Status}} exit={{.State.ExitCode}} error={{.State.Error}}'
+
+      echo
+      echo "## vllm-sr-container logs"
+      docker logs --tail 300 "${MAIN_CONTAINER}" || true
+
+      echo
+      echo "## vllm-sr-container dashboard health"
+      docker exec "${MAIN_CONTAINER}" sh -lc \
+        'ps -ef; ss -lntp 2>/dev/null | grep 8700 || true; curl -v http://localhost:8700/healthz' 2>&1 || true
+
+      echo
+      echo "## vllm-sr-container supervisor dashboard logs"
+      docker exec "${MAIN_CONTAINER}" sh -lc \
+        'ls -lah /var/log/supervisor 2>/dev/null || true; tail -n 200 /var/log/supervisor/dashboard*.log /var/log/supervisor/*dashboard* 2>/dev/null || true' 2>&1 || true
+    fi
   fi
 
   echo

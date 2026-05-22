@@ -8,6 +8,7 @@
 - [本地机器：拉取并打包镜像](docs/local-packaging.md)
 - [服务器：导入镜像并启动 vllm-sr](docs/server-load-and-start.md)
 - [服务器：离线启动和 dashboard 诊断](docs/server-diagnosis.md)
+- **NEWEST / 最新**：[`pip install vllm-sr` 稳定版 0.2.0 是单容器流程](docs/newest-pip-install-stable-0.2-single-container.md)
 - **NEWEST / 最新**：[dashboard image 存在，但没有 dashboard container](docs/newest-dashboard-image-but-no-container.md)
 - [排障：卡在 waiting for dashboard to become healthy](docs/troubleshooting-dashboard.md)
 
@@ -48,7 +49,13 @@ dashboard 卡住或找不到容器时，在服务器上跑诊断：
 curl -fsSL https://raw.githubusercontent.com/leilon/vllm-sr-docker-images/main/diagnose-vllm-sr-dashboard.sh | bash
 ```
 
-**NEWEST / 最新判断**：如果 dashboard image 已经存在，但没有 dashboard container，看这里：
+**NEWEST / 最新判断**：如果你是 `pip install vllm-sr` 安装的稳定版，先看单容器说明：
+
+```text
+docs/newest-pip-install-stable-0.2-single-container.md
+```
+
+如果你是 `pip install --pre vllm-sr` 或安装到 `0.3.0.dev...`，且 dashboard image 已经存在但没有 dashboard container，看这里：
 
 ```text
 docs/newest-dashboard-image-but-no-container.md

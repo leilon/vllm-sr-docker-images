@@ -2,6 +2,17 @@
 
 ## NEWEST / 最新判断
 
+如果你是 `pip install vllm-sr` 安装的稳定版，先看这个最新判断页：
+
+[NEWEST / 最新：`pip install vllm-sr` 稳定版是单容器流程](newest-pip-install-stable-0.2-single-container.md)
+
+核心判断：
+
+- 当前 `pip install vllm-sr` 默认是稳定版 `0.2.0`。
+- `0.2.0` 没有独立的 `vllm-sr-dashboard-container`。
+- 它只启动主容器 `vllm-sr-container`，dashboard 在这个主容器内部。
+- 如果日志进入 `Waiting for Dashboard to become healthy`，优先查 `docker logs vllm-sr-container`。
+
 如果你已经确认 dashboard image 存在，但 `docker ps -a` 里没有 dashboard container，先看这个最新判断页：
 
 [NEWEST / 最新：dashboard image 存在，但没有 dashboard container](newest-dashboard-image-but-no-container.md)
