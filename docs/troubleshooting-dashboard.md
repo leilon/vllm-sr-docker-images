@@ -6,6 +6,14 @@
 info waiting for dashboard to become healthy
 ```
 
+最快方式是在服务器上跑一键诊断脚本：
+
+```bash
+curl -fsSL https://raw.githubusercontent.com/leilon/vllm-sr-docker-images/main/diagnose-vllm-sr-dashboard.sh | bash
+```
+
+它会生成一个 `vllm-sr-diagnose-*.log` 文件，并把 Docker context、相关镜像、相关容器、dashboard 容器日志、8700 端口和 healthz 检查都跑一遍。
+
 先看 `vllm-sr` 相关容器状态：
 
 ```bash

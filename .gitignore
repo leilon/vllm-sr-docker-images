@@ -1,0 +1,12 @@
+*.tar
+*.tar.gz
+*.zip
+*.log
+.env
+.env.*
+id_rsa*
+*.pem
+*.key
+kubeconfig*
+config.yaml
+runtime.env

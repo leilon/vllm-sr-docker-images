@@ -56,6 +56,12 @@ export PATH="$HOME/.local/bin:$PATH"
 vllm-sr serve --image-pull-policy never
 ```
 
+如果想把启动过程同时保存成日志文件，用仓库里的脚本：
+
+```bash
+curl -fsSL https://raw.githubusercontent.com/leilon/vllm-sr-docker-images/main/serve-vllm-sr-offline.sh | bash
+```
+
 如果报缺镜像，看报错里的这一行：
 
 ```text
