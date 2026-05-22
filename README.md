@@ -8,6 +8,7 @@
 - [本地机器：拉取并打包镜像](docs/local-packaging.md)
 - [服务器：导入镜像并启动 vllm-sr](docs/server-load-and-start.md)
 - [服务器：离线启动和 dashboard 诊断](docs/server-diagnosis.md)
+- [本地访问服务器 dashboard：SSH 端口转发](docs/ssh-port-forwarding.md)
 - **NEWEST / 最新**：[`pip install vllm-sr` 稳定版 0.2.0 是单容器流程](docs/newest-pip-install-stable-0.2-single-container.md)
 - **NEWEST / 最新**：[dashboard image 存在，但没有 dashboard container](docs/newest-dashboard-image-but-no-container.md)
 - [排障：卡在 waiting for dashboard to become healthy](docs/troubleshooting-dashboard.md)
@@ -71,4 +72,22 @@ docs/newest-pip-install-stable-0.2-single-container.md
 
 ```text
 docs/newest-dashboard-image-but-no-container.md
+```
+
+如果 dashboard 已经在服务器启动，但本地浏览器无法直接访问，用 SSH 端口转发：
+
+```bash
+ssh -v -o ExitOnForwardFailure=yes -N -L 127.0.0.1:18700:127.0.0.1:8700 <USER>@<SERVER_IP>
+```
+
+然后本地打开：
+
+```text
+http://127.0.0.1:18700
+```
+
+完整排障命令见：
+
+```text
+docs/ssh-port-forwarding.md
 ```
