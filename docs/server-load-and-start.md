@@ -34,6 +34,28 @@ prom/prometheus
 grafana/grafana
 ```
 
+如果你另外导入了存储后端镜像，也确认一下：
+
+```bash
+docker images | grep -E 'redis|postgres|milvus'
+```
+
+如果使用完整 10 镜像包：
+
+```bash
+sha256sum -c vllm-sr-all-images.tar.sha256
+docker load -i vllm-sr-all-images.tar
+docker images | grep -E 'vllm-sr|dashboard|envoy|vllm-sr-sim|jaeger|prometheus|grafana|redis|postgres|milvus'
+```
+
+如果只补存储后端 3 镜像包：
+
+```bash
+sha256sum -c vllm-sr-storage-images.tar.sha256
+docker load -i vllm-sr-storage-images.tar
+docker images | grep -E 'redis|postgres|milvus'
+```
+
 ## 安装 vllm-sr CLI
 
 如果服务器还没有安装 `vllm-sr`，先安装 CLI，但跳过 Docker 自动启动：

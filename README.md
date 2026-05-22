@@ -20,6 +20,18 @@
 curl -fsSL https://raw.githubusercontent.com/leilon/vllm-sr-docker-images/main/pull-vllm-sr-default-images.sh | bash
 ```
 
+如果配置需要本地存储后端，补拉 `redis/postgres/milvus` 这 3 个镜像：
+
+```bash
+curl -fsSL https://raw.githubusercontent.com/leilon/vllm-sr-docker-images/main/pull-vllm-sr-storage-images.sh | bash
+```
+
+如果想一次性打包新版 CLI 可能用到的 10 个镜像：
+
+```bash
+curl -fsSL https://raw.githubusercontent.com/leilon/vllm-sr-docker-images/main/pull-vllm-sr-all-images.sh | bash
+```
+
 把生成的文件传到服务器：
 
 ```text

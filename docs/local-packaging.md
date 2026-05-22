@@ -60,6 +60,18 @@ vllm-sr-default-images.tar.sha256
 curl -fsSL https://raw.githubusercontent.com/leilon/vllm-sr-docker-images/main/pull-vllm-sr-default-images.sh | bash
 ```
 
+只拉存储后端 3 个镜像并打包：
+
+```bash
+curl -fsSL https://raw.githubusercontent.com/leilon/vllm-sr-docker-images/main/pull-vllm-sr-storage-images.sh | bash
+```
+
+拉取完整 10 个镜像并打包：
+
+```bash
+curl -fsSL https://raw.githubusercontent.com/leilon/vllm-sr-docker-images/main/pull-vllm-sr-all-images.sh | bash
+```
+
 只拉剩下 6 个镜像：
 
 ```bash
@@ -67,3 +79,44 @@ curl -fsSL https://raw.githubusercontent.com/leilon/vllm-sr-docker-images/main/p
 ```
 
 如果服务器是 ARM64，把 `linux/amd64` 改成 `linux/arm64` 再拉取。
+
+## 存储后端镜像
+
+如果服务器启动时报类似：
+
+```text
+Failed to start Postgres
+Image not found locally: postgres:16-alpine
+```
+
+在本地机器补拉并打包：
+
+```bash
+docker pull --platform linux/amd64 redis:7-alpine
+docker pull --platform linux/amd64 postgres:16-alpine
+docker pull --platform linux/amd64 milvusdb/milvus:v2.3.3
+
+docker save \
+  redis:7-alpine \
+  postgres:16-alpine \
+  milvusdb/milvus:v2.3.3 \
+  -o vllm-sr-storage-images.tar
+
+sha256sum vllm-sr-storage-images.tar > vllm-sr-storage-images.tar.sha256
+```
+
+服务器上导入：
+
+```bash
+sha256sum -c vllm-sr-storage-images.tar.sha256
+docker load -i vllm-sr-storage-images.tar
+docker images | grep -E 'redis|postgres|milvus'
+```
+
+如果只缺 `postgres:16-alpine`，也可以单独保存：
+
+```bash
+docker pull --platform linux/amd64 postgres:16-alpine
+docker save postgres:16-alpine -o postgres-16-alpine.tar
+sha256sum postgres-16-alpine.tar > postgres-16-alpine.tar.sha256
+```
