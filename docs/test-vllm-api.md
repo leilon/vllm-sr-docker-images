@@ -114,6 +114,34 @@ curl --noproxy '*' \
   http://127.0.0.1:8899/v1/models
 ```
 
+## 从容器内访问宿主机 vLLM
+
+如果 vllm-sr 跑在 Docker 容器里，而已有 vLLM 服务跑在宿主机 `8000` 端口，可以从容器内访问 Docker bridge 网关。Linux 默认 bridge 网关通常是 `172.17.0.1`：
+
+```bash
+docker exec <容器名> sh -lc 'curl -i -H "Authorization: Bearer '"$VLLM_API_KEY"'" http://172.17.0.1:8000/v1/models'
+```
+
+新版 split runtime 常见容器名：
+
+```bash
+docker exec vllm-sr-router-container sh -lc 'curl -i -H "Authorization: Bearer '"$VLLM_API_KEY"'" http://172.17.0.1:8000/v1/models'
+```
+
+如果用了自定义 stack name，例如 `VLLM_SR_STACK_NAME=test1`：
+
+```bash
+docker exec test1-vllm-sr-router-container sh -lc 'curl -i -H "Authorization: Bearer '"$VLLM_API_KEY"'" http://172.17.0.1:8000/v1/models'
+```
+
+如果 `172.17.0.1` 不通，先在宿主机确认 Docker bridge 网关：
+
+```bash
+docker network inspect bridge --format '{{(index .IPAM.Config 0).Gateway}}'
+```
+
+再把命令里的 `172.17.0.1` 换成实际网关地址。
+
 如果直连 `8000` 成功，但 `8899` 失败，优先看 vllm-sr / Envoy / router 日志。
 
 如果 `8000` 也失败，先排查原 vLLM 实例。
