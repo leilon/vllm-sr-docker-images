@@ -8,6 +8,7 @@
 - [本地机器：拉取并打包镜像](docs/local-packaging.md)
 - [服务器：导入镜像并启动 vllm-sr](docs/server-load-and-start.md)
 - [服务器：离线启动和 dashboard 诊断](docs/server-diagnosis.md)
+- [测试 vLLM / vllm-sr OpenAI 兼容接口](docs/test-vllm-api.md)
 - [本地访问服务器 dashboard：SSH 端口转发](docs/ssh-port-forwarding.md)
 - **NEWEST / 最新**：[`pip install vllm-sr` 稳定版 0.2.0 是单容器流程](docs/newest-pip-install-stable-0.2-single-container.md)
 - **NEWEST / 最新**：[dashboard image 存在，但没有 dashboard container](docs/newest-dashboard-image-but-no-container.md)
@@ -90,4 +91,10 @@ http://127.0.0.1:18700
 
 ```text
 docs/ssh-port-forwarding.md
+```
+
+测试已有 vLLM 后端或 vllm-sr 入口：
+
+```text
+docs/test-vllm-api.md
 ```
