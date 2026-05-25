@@ -7,6 +7,7 @@
 - [默认镜像清单](docs/images.md)
 - [本地机器：拉取并打包镜像](docs/local-packaging.md)
 - [服务器：导入镜像并启动 vllm-sr](docs/server-load-and-start.md)
+- [AutoDL 容器实例里的 Docker 限制](docs/autodl-container-docker.md)
 - [服务器：离线启动和 dashboard 诊断](docs/server-diagnosis.md)
 - [测试 vLLM / vllm-sr OpenAI 兼容接口](docs/test-vllm-api.md)
 - [本地访问服务器 dashboard：SSH 端口转发](docs/ssh-port-forwarding.md)
@@ -32,6 +33,18 @@ curl -fsSL https://raw.githubusercontent.com/leilon/vllm-sr-docker-images/main/p
 
 ```bash
 curl -fsSL https://raw.githubusercontent.com/leilon/vllm-sr-docker-images/main/pull-vllm-sr-all-images.sh | bash
+```
+
+如果目标机器是 AutoDL 普通容器实例，先看 Docker 限制说明。能安装 Docker CLI 不代表能 `docker load` 或 `docker run`：
+
+```text
+docs/autodl-container-docker.md
+```
+
+pre 版 vllm-sr 离线启动，并把端口整体偏移 100：
+
+```bash
+curl -fsSL https://raw.githubusercontent.com/leilon/vllm-sr-docker-images/main/serve-vllm-sr-pre-offset100.sh | bash
 ```
 
 把生成的文件传到服务器：
